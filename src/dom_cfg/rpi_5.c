@@ -98,6 +98,41 @@ void pv_domu_init(void)
 
 #endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
 
+#if defined(CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN)
+static const char *params_vbd_trout[] = {
+	"disk=[ 'backend=1, format=raw, vdev=xvda, access=ro, target=/1:/dom0/trout/super.img' ]",
+	"disk=[ 'backend=1, format=raw, vdev=xvdb, access=rw, target=/1:/dom0/trout/userdata.img' ]",
+};
+
+static struct xen_domain_cfg domu_cfg_4 = {
+	.name = "trout",
+	.mem_kb = 4096 * 1024,
+	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
+	.max_evtchns = 10,
+	.max_vcpus = 4,
+	.gnt_frames = 32,
+	.max_maptrack_frames = 1,
+	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
+	.tee_type = XEN_DOMCTL_CONFIG_TEE_NONE,
+	.cmdline = "console=hvc0 rootwait androidboot.hardware=trout "
+			   "vendor_boot=/1:/dom0/trout/vendor_boot.img",
+	.ssidref = 12,
+
+	.load_image_bytes = storage_image_kernel_read,
+	.get_image_size = storage_image_kernel_get_size,
+
+	.image_ramdisk_path = "/1:/dom0/trout/init_boot.img",
+};
+
+void aosp_trout_domu_init(void)
+{
+	for (int i = 0; i < ARRAY_SIZE(params_vbd_trout); i++)
+	{
+		parse_one_record_and_fill_cfg(params_vbd_trout[i], &domu_cfg_4.back_cfg);
+	}
+}
+#endif /* CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN */
+
 static struct xen_domain_cfg domu_cfg_1 = {
 	.name = "rpi_5_domu",
 	.mem_kb = 16384,
@@ -190,27 +225,34 @@ struct dom0_domain_cfg domain_cfgs[] = {
 	{
 		.domain_cfg = &domu_cfg_0,
 #if defined(CONFIG_DOM_STORAGE_FATFS_ENABLE)
-		.image_kernel_path = DISK_BIN_PATH"z_blinky.bin",
+		.image_kernel_path = DISK_BIN_PATH "z_blinky.bin",
 #endif /* CONFIG_DOM_STORAGE_FATFS_ENABLE */
 	},
 	{
 		.domain_cfg = &domu_cfg_1,
 #if defined(CONFIG_DOM_STORAGE_FATFS_ENABLE)
-		.image_kernel_path = DISK_BIN_PATH"z_sync.bin",
+		.image_kernel_path = DISK_BIN_PATH "z_sync.bin",
 #endif /* CONFIG_DOM_STORAGE_FATFS_ENABLE */
 	},
 #if defined(CONFIG_DOM_STORAGE_FATFS_ENABLE)
 	{
 		.domain_cfg = &domu_cfg_2,
-		.image_kernel_path = DISK_BIN_PATH"helloworld_xen-arm64",
+		.image_kernel_path = DISK_BIN_PATH "helloworld_xen-arm64",
 	},
 #endif /* CONFIG_DOM_STORAGE_FATFS_ENABLE */
 #if defined(CONFIG_DOM_CFG_LINUX_PV_DOMAIN)
 	{
 		.domain_cfg = &domu_cfg_3,
-		.image_kernel_path = DISK_BIN_PATH"linux-pv-image",
+		.image_kernel_path = DISK_BIN_PATH "linux-pv-image",
 		.init = pv_domu_init,
 	},
 #endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
-	{ 0 },
+#if defined(CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN)
+	{
+		.domain_cfg = &domu_cfg_4,
+		.image_kernel_path = "/1:/dom0/trout/boot.img",
+		.init = aosp_trout_domu_init,
+	},
+#endif /* CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN */
+	{0},
 };
