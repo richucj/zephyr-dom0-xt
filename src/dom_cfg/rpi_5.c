@@ -121,7 +121,6 @@ static struct xen_domain_cfg domu_cfg_4 = {
 	.load_image_bytes = storage_image_kernel_read,
 	.get_image_size = storage_image_kernel_get_size,
 
-	.image_ramdisk_path = "/1:/dom0/trout/init_boot.img",
 };
 
 void aosp_trout_domu_init(void)
