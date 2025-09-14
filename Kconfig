@@ -76,10 +76,11 @@ config DOM_CFG_LINUX_PV_DOMAIN
 	  It is expected to be placed on the storage device, connected to
 	  Dom0.
 
-config DOM_CFG_AOSP_TROUT_DOMAIN
-	bool "Enable AOSP Trout domain support"
+config DOM_CFG_AOSP_AAOS_DOMAIN
+	bool "Enable AOSP AAOS domain support"
+	default n
 	help
-	  Adds Android-based domain for Trout device.
+	  Adds Android-based domain for AAOS device.
 
 endif #DOM_STORAGE_FATFS_ENABLE
 

@@ -98,14 +98,17 @@ void pv_domu_init(void)
 
 #endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
 
-#if defined(CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN)
-static const char *params_vbd_trout[] = {
-	"disk=[ 'backend=1, format=raw, vdev=xvda, access=ro, target=/1:/dom0/trout/super.img' ]",
-	"disk=[ 'backend=1, format=raw, vdev=xvdb, access=rw, target=/1:/dom0/trout/userdata.img' ]",
+#if defined(CONFIG_DOM_CFG_AAOS_DOMAIN)
+static const char *params_vif_aaos =
+	"vif=[ 'backend=1,bridge=xenbr0,mac=08:00:27:ff:cb:cf,ip=192.168.0.3 "
+	"255.255.255.0 192.168.0.1' ]";
+static const char *params_vbd_aaos[] = {
+	"disk=[ 'backend=1, format=raw, vdev=xvda, access=ro, target=/1:/dom0/aaos/super.img' ]",
+	"disk=[ 'backend=1, format=raw, vdev=xvdb, access=rw, target=/1:/dom0/aaos/userdata.img' ]",
 };
 
 static struct xen_domain_cfg domu_cfg_4 = {
-	.name = "trout",
+	.name = "aaos",
 	.mem_kb = 4096 * 1024,
 	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
 	.max_evtchns = 10,
@@ -114,8 +117,9 @@ static struct xen_domain_cfg domu_cfg_4 = {
 	.max_maptrack_frames = 1,
 	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
 	.tee_type = XEN_DOMCTL_CONFIG_TEE_NONE,
-	.cmdline = "console=hvc0 rootwait androidboot.hardware=trout "
-			   "vendor_boot=/1:/dom0/trout/vendor_boot.img",
+	.cmdline = "console=hvc0 rootwait androidboot.hardware=aaos "
+			   "androidboot.selinux=permissive "
+			   "vendor_boot=/1:/dom0/aaos/vendor_boot.img",
 	.ssidref = 12,
 
 	.load_image_bytes = storage_image_kernel_read,
@@ -123,14 +127,15 @@ static struct xen_domain_cfg domu_cfg_4 = {
 
 };
 
-void aosp_trout_domu_init(void)
+void aaos_domu_init(void)
 {
-	for (int i = 0; i < ARRAY_SIZE(params_vbd_trout); i++)
+	parse_one_record_and_fill_cfg(params_vif_aaos, &domu_cfg_4.back_cfg);
+	for (int i = 0; i < ARRAY_SIZE(params_vbd_aaos); i++)
 	{
-		parse_one_record_and_fill_cfg(params_vbd_trout[i], &domu_cfg_4.back_cfg);
+		parse_one_record_and_fill_cfg(params_vbd_aaos[i], &domu_cfg_4.back_cfg);
 	}
 }
-#endif /* CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN */
+#endif /* CONFIG_DOM_CFG_AAOS_DOMAIN */
 
 static struct xen_domain_cfg domu_cfg_1 = {
 	.name = "rpi_5_domu",
@@ -246,12 +251,12 @@ struct dom0_domain_cfg domain_cfgs[] = {
 		.init = pv_domu_init,
 	},
 #endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
-#if defined(CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN)
+#if defined(CONFIG_DOM_CFG_AOSP_AAOS_DOMAIN)
 	{
 		.domain_cfg = &domu_cfg_4,
-		.image_kernel_path = "/1:/dom0/trout/boot.img",
-		.init = aosp_trout_domu_init,
+		.image_kernel_path = "/1:/dom0/aaos/boot.img",
+		.init = aosp_aaos_domu_init,
 	},
-#endif /* CONFIG_DOM_CFG_AOSP_TROUT_DOMAIN */
+#endif /* CONFIG_DOM_CFG_AOSP_AAOS_DOMAIN */
 	{0},
 };
