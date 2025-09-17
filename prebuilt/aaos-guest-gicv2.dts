@@ -1,0 +1,22 @@
+/dts-v1/;
+/ {
+    compatible = "google,trout", "android,vm";
+    model = "AAOS Xen guest (RPi5, vGICv2)";
+    #address-cells = <2>;
+    #size-cells   = <2>;
+    interrupt-parent = <&gic>;
+
+    gic: interrupt-controller@8000000 {
+        compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+        #address-cells = <0>;
+        #interrupt-cells = <3>;
+        interrupt-controller;
+        reg = <0x0 0x8000000 0x0 0x1000>,   /* GICD */
+              <0x0 0x8001000 0x0 0x1000>;   /* GICC */
+    };
+
+    chosen {
+        stdout-path = "serial0:115200n8";
+        bootargs = "console=hvc0 earlycon=hvc rootwait androidboot.hardware=trout androidboot.selinux=permissive";
+    };
+};

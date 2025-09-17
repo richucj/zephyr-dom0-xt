@@ -117,13 +117,15 @@ static struct xen_domain_cfg domu_cfg_4 = {
 	.max_maptrack_frames = 1,
 	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
 	.tee_type = XEN_DOMCTL_CONFIG_TEE_NONE,
-	.cmdline = "console=hvc0 rootwait androidboot.hardware=aaos "
+	.cmdline = "console=hvc0 earlycon=hvc rootwait androidboot.hardware=trout "
 			   "androidboot.selinux=permissive "
 			   "vendor_boot=/1:/dom0/aaos/vendor_boot.img",
 	.ssidref = 12,
 
 	.load_image_bytes = storage_image_kernel_read,
 	.get_image_size = storage_image_kernel_get_size,
+	.image_dt_read = storage_image_dt_read,
+	.image_dt_get_size = storage_image_dt_get_size,
 
 };
 
@@ -251,12 +253,13 @@ struct dom0_domain_cfg domain_cfgs[] = {
 		.init = pv_domu_init,
 	},
 #endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
-#if defined(CONFIG_DOM_CFG_AOSP_AAOS_DOMAIN)
+#if defined(CONFIG_DOM_CFG_AAOS_DOMAIN)
 	{
 		.domain_cfg = &domu_cfg_4,
-		.image_kernel_path = "/1:/dom0/aaos/boot.img",
-		.init = aosp_aaos_domu_init,
+        .image_kernel_path = DISK_BIN_PATH "aaos/Image",
+		.image_dt_path = DISK_BIN_PATH "aaos/aaos-guest-gicv2.dtb",
+		.init = aaos_domu_init,
 	},
-#endif /* CONFIG_DOM_CFG_AOSP_AAOS_DOMAIN */
+#endif /* CONFIG_DOM_CFG_AAOS_DOMAIN */
 	{0},
 };

@@ -148,4 +148,10 @@ config VCHAN_THREAD_STACK_SIZE
 
 endif #VCHAN_SHELL_CMDS
 
+config DOM_CFG_AAOS_DOMAIN
+	bool "Enable support for Android Automotive OS (AAOS) domain"
+	default y
+	help
+	  Enable support for Android Automotive OS (AAOS) domain
+
 source "Kconfig.zephyr"
