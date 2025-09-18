@@ -68,14 +68,10 @@ static ssize_t get_domu_image_size(void *image_info, uint64_t *size)
 static const char *params_vif_aaos =
 	"vif=[ 'backend=1,bridge=xenbr0,mac=08:00:27:ff:cb:cf,ip=192.168.0.3 "
 	"255.255.255.0 192.168.0.1' ]";
-static const char *params_vbd_aaos[] = {
-	"disk=[ 'backend=1, format=raw, vdev=xvda, access=ro, target=/1:/dom0/aaos/super.img' ]",
-	"disk=[ 'backend=1, format=raw, vdev=xvdb, access=rw, target=/1:/dom0/aaos/userdata.img' ]",
-};
 
 static struct xen_domain_cfg domu_cfg_4 = {
 	.name = "aaos",
-	.mem_kb = 4096 * 1024,
+	.mem_kb = 1024 * 1024,
 	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
 	.max_evtchns = 10,
 	.max_vcpus = 4,
@@ -84,24 +80,16 @@ static struct xen_domain_cfg domu_cfg_4 = {
 	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
 	.tee_type = XEN_DOMCTL_CONFIG_TEE_NONE,
 	.cmdline = "console=hvc0 earlycon=hvc rootwait androidboot.hardware=trout "
-			   "androidboot.selinux=permissive "
-			   "vendor_boot=/1:/dom0/aaos/vendor_boot.img",
+			   "androidboot.selinux=permissive",
 	.ssidref = 12,
 
 	.load_image_bytes = storage_image_kernel_read,
 	.get_image_size = storage_image_kernel_get_size,
-	/* .image_dt_read = storage_image_dt_read, */
-	/* .image_dt_get_size = storage_image_dt_get_size, */
-
 };
 
 void aaos_domu_init(void)
 {
 	parse_one_record_and_fill_cfg(params_vif_aaos, &domu_cfg_4.back_cfg);
-	for (int i = 0; i < ARRAY_SIZE(params_vbd_aaos); i++)
-	{
-		parse_one_record_and_fill_cfg(params_vbd_aaos[i], &domu_cfg_4.back_cfg);
-	}
 }
 #endif /* CONFIG_DOM_CFG_AAOS_DOMAIN */
 
@@ -216,7 +204,6 @@ struct dom0_domain_cfg domain_cfgs[] = {
 	{
 		.domain_cfg = &domu_cfg_4,
         .image_kernel_path = DISK_BIN_PATH "aaos/Image",
-		/* .image_dt_path = DISK_BIN_PATH "aaos/aaos-guest-gicv2.dtb", */
 		.init = aaos_domu_init,
 	},
 #endif /* CONFIG_DOM_CFG_AAOS_DOMAIN */
