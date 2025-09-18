@@ -64,40 +64,6 @@ static ssize_t get_domu_image_size(void *image_info, uint64_t *size)
 }
 #endif /* CONFIG_DOM_STORAGE_FATFS_ENABLE */
 
-#if defined(CONFIG_DOM_CFG_LINUX_PV_DOMAIN)
-static const char *params_vif =
-	"vif=[ 'backend=1,bridge=xenbr0,mac=08:00:27:ff:cb:ce,ip=192.168.0.2 "
-	"255.255.255.0 192.168.0.1' ]";
-
-static const char *params_vbd =
-	"disk=[ 'backend=1, format=raw, vdev=xvda, "
-	"access=rw, target=/etc/u-boot-initial-env' ]";
-
-static struct xen_domain_cfg domu_cfg_3 = {
-	.name = "linux_pv_domu",
-	.mem_kb = 256 * 1024,
-	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
-	.max_evtchns = 10,
-	.max_vcpus = 2,
-	.gnt_frames = 32,
-	.max_maptrack_frames = 1,
-	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
-	.tee_type = XEN_DOMCTL_CONFIG_TEE_NONE,
-	.cmdline = "root=/dev/ram0 rootwait console=hvc0 clk_ignore_unused",
-	.ssidref = 12,
-
-	.load_image_bytes = storage_image_kernel_read,
-	.get_image_size = storage_image_kernel_get_size,
-};
-
-void pv_domu_init(void)
-{
-	parse_one_record_and_fill_cfg(params_vif, &domu_cfg_3.back_cfg);
-	parse_one_record_and_fill_cfg(params_vbd, &domu_cfg_3.back_cfg);
-}
-
-#endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
-
 #if defined(CONFIG_DOM_CFG_AAOS_DOMAIN)
 static const char *params_vif_aaos =
 	"vif=[ 'backend=1,bridge=xenbr0,mac=08:00:27:ff:cb:cf,ip=192.168.0.3 "
@@ -246,13 +212,6 @@ struct dom0_domain_cfg domain_cfgs[] = {
 		.image_kernel_path = DISK_BIN_PATH "helloworld_xen-arm64",
 	},
 #endif /* CONFIG_DOM_STORAGE_FATFS_ENABLE */
-#if defined(CONFIG_DOM_CFG_LINUX_PV_DOMAIN)
-	{
-		.domain_cfg = &domu_cfg_3,
-		.image_kernel_path = DISK_BIN_PATH "linux-pv-image",
-		.init = pv_domu_init,
-	},
-#endif /* CONFIG_DOM_CFG_LINUX_PV_DOMAIN */
 #if defined(CONFIG_DOM_CFG_AAOS_DOMAIN)
 	{
 		.domain_cfg = &domu_cfg_4,
