@@ -124,8 +124,8 @@ static struct xen_domain_cfg domu_cfg_4 = {
 
 	.load_image_bytes = storage_image_kernel_read,
 	.get_image_size = storage_image_kernel_get_size,
-	.image_dt_read = storage_image_dt_read,
-	.image_dt_get_size = storage_image_dt_get_size,
+	/* .image_dt_read = storage_image_dt_read, */
+	/* .image_dt_get_size = storage_image_dt_get_size, */
 
 };
 
@@ -257,7 +257,7 @@ struct dom0_domain_cfg domain_cfgs[] = {
 	{
 		.domain_cfg = &domu_cfg_4,
         .image_kernel_path = DISK_BIN_PATH "aaos/Image",
-		.image_dt_path = DISK_BIN_PATH "aaos/aaos-guest-gicv2.dtb",
+		/* .image_dt_path = DISK_BIN_PATH "aaos/aaos-guest-gicv2.dtb", */
 		.init = aaos_domu_init,
 	},
 #endif /* CONFIG_DOM_CFG_AAOS_DOMAIN */

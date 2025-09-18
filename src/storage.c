@@ -61,15 +61,9 @@ ssize_t storage_image_kernel_get_size(void *image_info, uint64_t *size)
 int storage_image_dt_read(uint8_t *buf, size_t bufsize, uint64_t offset, void *image_info)
 {
 	struct dom0_domain_cfg *dom_cfg = image_info;
-	int ret;
 
 	LOG_INF("storage: file read %s size: %zd", dom_cfg->image_dt_path, bufsize);
-	ret = xrun_read_file(dom_cfg->image_dt_path, buf, bufsize, offset);
-	if (ret < 0) {
-		return ret;
-	}
-
-	return 0;
+	return xrun_read_file(dom_cfg->image_dt_path, buf, bufsize, offset);
 }
 
 int storage_image_dt_get_size(void *image_info, size_t *size)
