@@ -118,10 +118,10 @@ static const char *params_vbd_aaos[] = {
 
 static struct xen_domain_cfg domu_cfg_4 = {
 	.name = "aaos",
-	.mem_kb = 1024 * 1024,
+	.mem_kb = 6 * 1024 * 1024,
 	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
 	.max_evtchns = 10,
-	.max_vcpus = 4,
+	.max_vcpus = 3,
 	.gnt_frames = 32,
 	.max_maptrack_frames = 1,
 	.gic_version = XEN_DOMCTL_CONFIG_GIC_V2,
