@@ -24,6 +24,7 @@ struct dom0_domain_cfg {
 	void (*init)(void);
 	const char *image_kernel_path; /**< disk: domain kernel binary path */
 	const char *image_dt_path; /**< disk: domain partial device-tree (PDT) binary path */
+	const char *image_ramdisk_path; /**< disk: domain initrd/ramdisk binary path */
 };
 
 #if defined(CONFIG_DOM_STORAGE_FATFS_ENABLE)
@@ -36,6 +37,8 @@ int storage_image_kernel_read(uint8_t *buf, size_t bufsize, uint64_t offset, voi
 ssize_t storage_image_kernel_get_size(void *image_info, uint64_t *size);
 int storage_image_dt_read(uint8_t *buf, size_t bufsize, uint64_t offset, void *image_info);
 int storage_image_dt_get_size(void *image_info, size_t *size);
+int storage_image_ramdisk_read(uint8_t *buf, size_t bufsize, uint64_t offset, void *image_info);
+ssize_t storage_image_ramdisk_get_size(void *image_info, uint64_t *size);
 #else
 
 static inline int storage_init(void)

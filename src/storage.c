@@ -80,6 +80,28 @@ int storage_image_dt_get_size(void *image_info, size_t *size)
 	return r_size;
 }
 
+int storage_image_ramdisk_read(uint8_t *buf, size_t bufsize, uint64_t offset, void *image_info)
+{
+	struct dom0_domain_cfg *dom_cfg = image_info;
+
+	LOG_INF("storage: file read %s size: %zd", dom_cfg->image_ramdisk_path, bufsize);
+	return xrun_read_file(dom_cfg->image_ramdisk_path, buf, bufsize, offset);
+}
+
+ssize_t storage_image_ramdisk_get_size(void *image_info, uint64_t *size)
+{
+	struct dom0_domain_cfg *dom_cfg = image_info;
+	ssize_t r_size;
+
+	r_size = xrun_get_file_size(dom_cfg->image_ramdisk_path);
+	if (r_size >= 0) {
+		*size = r_size;
+		return 0;
+	}
+
+	return r_size;
+}
+
 int storage_init(void)
 {
 	uint64_t memory_size_mb;
