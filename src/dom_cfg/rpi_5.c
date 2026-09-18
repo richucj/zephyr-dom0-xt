@@ -75,7 +75,7 @@ static const char *params_vbd =
 
 static struct xen_domain_cfg domu_cfg_3 = {
 	.name = "linux_pv_domu",
-	.mem_kb = 256 * 1024,
+	.mem_kb = 512 * 1024,
 	.flags = (XEN_DOMCTL_CDF_hvm | XEN_DOMCTL_CDF_hap),
 	.max_evtchns = 10,
 	.max_vcpus = 2,
